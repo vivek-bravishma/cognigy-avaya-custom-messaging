@@ -9,7 +9,7 @@
 	},
 	"repository": {
 		"type": "git",
-		"url": "https://github.com/Cognigy/Extensions"
+		"url": "https://github.com/vivek-bravishma/cognigy-avaya-custom-messaging"
 	},
 	"author": "Vivek Nishad",
 	"license": "MIT",
