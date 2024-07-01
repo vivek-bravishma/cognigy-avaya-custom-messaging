@@ -1,0 +1,26 @@
+{
+	"name": "avaya-custom-messaging",
+	"version": "1.0.0",
+	"description": "Extension for Avaya custom messaging",
+	"main": "build/module.js",
+	"scripts": {
+		"transpile": "tsc -p .",
+		"tar": "tar -cvf avaya.tar.gz build/* package.json package-lock.json README.md icon.png"
+	},
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/Cognigy/Extensions"
+	},
+	"author": "Vivek Nishad",
+	"license": "MIT",
+	"dependencies": {
+		"@cognigy/extension-tools": "^0.13.0",
+		"axios": "^0.21.2",
+		"tslint": "^6.1.2"
+	},
+	"devDependencies": {
+		"@types/axios": "^0.14.0",
+		"@types/node": "^10.14.6",
+		"typescript": "^3.1.6"
+	}
+}
