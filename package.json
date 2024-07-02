@@ -5,7 +5,10 @@
 	"main": "build/module.js",
 	"scripts": {
 		"transpile": "tsc -p .",
-		"tar": "tar -cvf avaya.tar.gz build/* package.json package-lock.json README.md icon.png"
+		"zip": "tar cfz avaya-custom-messaging.tar.gz build/* icon.png package.json package-lock.json README.md",
+		"zip_source": "tar cfz avaya-custom-messaging_src.tar.gz src/* icon.png package.json ",
+		"build": "npm run transpile && npm run lint && npm run zip && npm run zip_source",
+		"lint": "tslint -c tslint.json src/**/*.ts"
 	},
 	"repository": {
 		"type": "git",
