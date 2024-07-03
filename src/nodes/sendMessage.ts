@@ -25,28 +25,29 @@ export interface ISendMsgParams extends INodeFunctionBaseParams {
 	};
 }
 
-export const sendMessage = createNodeDescriptor({
+export const sendMessageNode = createNodeDescriptor({
 	type: "sendCustomMessage",
 	defaultLabel: "Send Custom Message to Avaya",
 	fields: [
 		{
 			key: "connection",
-			label: "Avaya API Connection",
+			label: "API Key",
 			type: "connection",
 			params: {
-				connectionType: "avaya-api",
+				connectionType: "axpConfig",
 				required: true,
 			},
 		},
-		{
-			key: "token",
-			type: "cognigyText",
-			label: "Token",
-			defaultValue: "{{context.avaya_custom_messaging.access_token}}",
-			params: {
-				required: true,
-			},
-		},
+
+		// {
+		// 	key: "token",
+		// 	type: "cognigyText",
+		// 	label: "Token",
+		// 	defaultValue: "{{context.avaya_custom_messaging.access_token}}",
+		// 	params: {
+		// 		required: true,
+		// 	},
+		// },
 		{
 			key: "text",
 			type: "cognigyText",
@@ -62,7 +63,8 @@ export const sendMessage = createNodeDescriptor({
 			key: "data",
 			label: "Data",
 			defaultCollapsed: true,
-			fields: ["text", "token"],
+			// fields: ["text", "token"],
+			fields: ["text"],
 		},
 	],
 	form: [
@@ -79,18 +81,30 @@ export const sendMessage = createNodeDescriptor({
 	function: async ({ cognigy, config }: ISendMsgParams) => {
 		const { api, input } = cognigy;
 		// const { connection } = config;
-		const { text, token, connection } = config;
+		const { text, connection } = config;
 
 		const {
 			baseUrl,
 			accountId,
+			grantType,
+			clientSecret,
+			clientId,
 			channelProviderId,
 			channelId,
 			integrationId,
 		} = connection;
 
+		const token = await getToken(
+			baseUrl,
+			accountId,
+			grantType,
+			clientSecret,
+			clientId,
+			api
+		);
+
 		if (!text) throw new Error("The user message text is missing.");
-		if (!token) throw new Error("The token is missing.");
+		if (!token) throw new Error("The token is missing..token--> " + token);
 
 		if (!baseUrl)
 			throw new Error("The baseUrl of avaya custom messaging is missing");
@@ -117,8 +131,6 @@ export const sendMessage = createNodeDescriptor({
 		try {
 			let body;
 			let attachments = [];
-
-			// console.log('Message Type ==> ', message_type)
 			if (message_type === "text") {
 				body = {
 					elementType: "text",
@@ -156,7 +168,10 @@ export const sendMessage = createNodeDescriptor({
 			// 	};
 			// }
 
-			console.log("//Sending Message");
+			api.log(
+				"info",
+				"============================= Sending Message to avaya ============================="
+			);
 			let options: AxiosRequestConfig = {
 				method: "POST",
 				url: `${baseUrl}/api/digital/custom-messaging/v1/accounts/${accountId}/messages`,
@@ -191,9 +206,10 @@ export const sendMessage = createNodeDescriptor({
 				},
 			};
 
-			console.log(
-				"let avaya_send_msg_payload= ",
-				JSON.stringify(options)
+			api.log(
+				"info",
+				"================== Message payload sent ==================" +
+					JSON.stringify(options)
 			);
 
 			let resp = await axios.request(options);
@@ -201,7 +217,7 @@ export const sendMessage = createNodeDescriptor({
 			// return resp.data;
 			api.log(
 				"info",
-				"custom async message send=> " + JSON.stringify(resp.data)
+				"custom async message response x=> " + JSON.stringify(resp.data)
 			);
 			api.addToContext(contextKey + ".message_send", resp.data, "array");
 		} catch (error) {
@@ -337,3 +353,48 @@ export const sendMessage = createNodeDescriptor({
 // 		console.log("Error while sending async message==> ", err);
 // 	}
 // }
+
+async function getToken(
+	baseUrl: string,
+	accountId: string,
+	grantType: string,
+	clientSecret: string,
+	clientId: string,
+	api: any
+): Promise<any> {
+	let access_token = null;
+	api.log(
+		"info",
+		"=========================== avaya access token ==========================="
+	);
+
+	try {
+		let options: AxiosRequestConfig = {
+			method: "POST",
+			url: `${baseUrl}/api/auth/v1/${accountId}/protocol/openid-connect/token`,
+			headers: {
+				accept: "application/json",
+				"Content-Type": "application/x-www-form-urlencoded",
+			},
+			data: {
+				grant_type: grantType,
+				client_id: clientId,
+				client_secret: clientSecret,
+			},
+		};
+
+		let resp = await axios.request(options);
+		api.log("info", "access_token options==> " + JSON.stringify(options));
+
+		if (resp.status === 200) access_token = resp.data.access_token;
+		api.log("info", "access_token resp==> " + JSON.stringify(resp.data));
+	} catch (err) {
+		api.log("error", "access_token err==> " + JSON.stringify(err));
+	}
+	api.log(
+		"info",
+		"=========================== avaya access token ==========================="
+	);
+
+	return access_token;
+}

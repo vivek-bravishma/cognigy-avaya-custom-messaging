@@ -1,13 +1,8 @@
 import { createExtension } from "@cognigy/extension-tools";
-
-import { sendMessage } from "./nodes/sendMessage";
 import { avayaApiConfig } from "./connections/avaya";
-
+import { sendMessageNode } from "./nodes/sendMessage";
 export default createExtension({
-	nodes: [sendMessage],
+	nodes: [sendMessageNode],
 	connections: [avayaApiConfig],
-
-	options: {
-		label: "Avaya Custom Messaging",
-	},
+	options: {label: "Avaya Custom Messaging"}
 });

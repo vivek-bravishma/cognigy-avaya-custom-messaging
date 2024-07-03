@@ -1,7 +1,7 @@
 import { IConnectionSchema } from "@cognigy/extension-tools";
 
 export const avayaApiConfig: IConnectionSchema = {
-	type: "avaya-api",
+	type: "axpConfig",
 	label: "Avaya API Key",
 	fields: [
 		{ fieldName: "baseUrl" },

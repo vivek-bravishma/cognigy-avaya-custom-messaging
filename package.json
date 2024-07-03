@@ -7,7 +7,9 @@
 		"transpile": "tsc -p .",
 		"zip": "tar cfz avaya-custom-messaging.tar.gz build/* icon.png package.json package-lock.json README.md",
 		"zip_source": "tar cfz avaya-custom-messaging_src.tar.gz src/* icon.png package.json ",
-		"build": "npm run transpile && npm run lint && npm run zip && npm run zip_source",
+		"zip_full": "tar cfz avaya-custom-messaging-full.tar.gz node_modules/* build/* icon.png package.json package-lock.json README.md",
+		"build:src": "npm run transpile && npm run lint && npm run zip && npm run zip_source",
+		"build": "npm run transpile && npm run lint && npm run zip && npm run zip_full",
 		"lint": "tslint -c tslint.json src/**/*.ts"
 	},
 	"repository": {
@@ -17,13 +19,13 @@
 	"author": "Vivek Nishad",
 	"license": "MIT",
 	"dependencies": {
-		"@cognigy/extension-tools": "^0.13.0",
-		"axios": "^0.21.2",
-		"tslint": "^6.1.2"
+		"@cognigy/extension-tools": "^0.16.1",
+		"axios": "^1.7.2",
+		"tslint": "^6.1.3"
 	},
 	"devDependencies": {
 		"@types/axios": "^0.14.0",
-		"@types/node": "^10.14.6",
-		"typescript": "^3.1.6"
+		"@types/node": "^20.14.9",
+		"typescript": "^5.5.3"
 	}
 }

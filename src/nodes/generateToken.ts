@@ -33,7 +33,7 @@ export const accessTokenNode = createNodeDescriptor({
 			label: "Avaya API Connection",
 			type: "connection",
 			params: {
-				connectionType: "avaya-api",
+				connectionType: "axp-config",
 				required: true,
 			},
 		},
